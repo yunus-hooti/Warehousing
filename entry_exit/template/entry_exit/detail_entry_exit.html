@@ -1,0 +1,209 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}جزئیات تراکنش{% endblock %}
+
+{% block content %}
+
+<style>
+    /* استایل‌های اختصاصی همین صفحه برای جلوگیری از به‌هم‌ریختگی */
+    .detail-page-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    /* کارت وضعیت (بالا) */
+    .status-card {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap; /* در موبایل می‌شکند */
+        gap: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .status-text {
+        font-size: 1.1rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* کارت جزئیات (پایین) */
+    .details-box {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    /* گرید‌بندی منظم برای اطلاعات */
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* رسپانسیو */
+        gap: 30px;
+        margin-bottom: 20px;
+    }
+
+    .info-row {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        border-bottom: 1px dashed #eee;
+        padding-bottom: 10px;
+    }
+
+    .info-label {
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .info-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .full-row {
+        grid-column: 1 / -1; /* تمام عرض */
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        border: 1px solid #eee;
+    }
+</style>
+
+<div class="detail-page-container">
+
+    <div class="page-header">
+        <h1>
+            <i class="fa-solid fa-file-invoice" style="color: var(--primary-color);"></i>
+            جزئیات درخواست {% if tx.type_of_operation == 'entry' %}ورود{% else %}خروج{% endif %}
+        </h1>
+
+        <div class="header-actions">
+            <a href="{% url 'entry_exit:list_entry_exit' %}" class="app-btn"
+               style="background-color: #e0e0e0; color: #333;">
+                <i class="fa-solid fa-arrow-right"></i> بازگشت
+            </a>
+        </div>
+    </div>
+
+    <div class="status-card">
+        <div class="status-text">
+            <span>وضعیت فعلی:</span>
+            {% if entry_exit.is_active %}
+            <span style="color: #28a745; background: #e6f9ec; padding: 5px 12px; border-radius: 20px; font-size: 0.9em;">
+                    <i class="fa-solid fa-check-circle"></i> تایید شده
+                </span>
+            {% else %}
+            <span style="color: #dc3545; background: #fde8e8; padding: 5px 12px; border-radius: 20px; font-size: 0.9em;">
+                    <i class="fa-solid fa-clock"></i> در انتظار تایید
+                </span>
+            {% endif %}
+        </div>
+
+        {% if user.is_superuser %}
+        <div>
+            <form action="{% url 'entry_exit:true_is_good_entry_exit' entry_exit.id %}" method="post"
+                  style="margin: 0;">
+                {% csrf_token %}
+                {% if entry_exit.is_active %}
+                <button type="submit" class="app-btn" style="background-color: var(--danger-color); color: white;">
+                    <i class="fa-solid fa-ban"></i> لغو تایید (رد کردن)
+                </button>
+                {% else %}
+                <button type="submit" class="app-btn" name="acceptance"
+                        style="background-color: #28a745; color: white;">
+                    <i class="fa-solid fa-check-double"></i> تایید نهایی درخواست
+                </button>
+                {% endif %}
+            </form>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="details-box">
+        <div class="info-grid">
+
+            <div class="info-row">
+                <span class="info-label">نام کالا</span>
+                <span class="info-value">
+                    <a href="{% url 'goods:detail_good' entry_exit.good.id %}">{{ entry_exit.good.name }}</a>
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">نوع درخواست</span>
+                <span class="info-value">
+                    {% if entry_exit.type_of_operation == 'entry' %}
+                        <span style="color: green;">ورود به انبار <i class="fa-solid fa-arrow-down"></i></span>
+                    {% else %}
+                        <span style="color: red;">خروج از انبار <i class="fa-solid fa-arrow-up"></i></span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">مشتری / مالک کالا</span>
+                <span class="info-value">{{ entry_exit.supplier_good.company_name }}</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">تعداد</span>
+                <span class="info-value">{{ entry_exit.number }} عدد</span>
+            </div>
+
+            <div class="info-row">
+                <span class="info-label">کاربر ثبت کننده (در سیستم)</span>
+                <span class="info-value">
+                    <i class="fa-solid fa-user-gear" style="color: #ccc;"></i>
+                    {{ entry_exit.registering_user.username }}
+                </span>
+            </div>
+            {% if entry_exit.type_of_operation == 'exit' %}
+            <div class="info-row" style="background-color: #fff9e6; border-radius: 4px; padding: 5px;">
+                <span class="info-label">درخواست‌کننده / تحویل‌گیرنده</span>
+                <span class="info-value">
+                    <i class="fa-solid fa-person-walking-arrow-right" style="color: #f39c12;"></i>
+                    {{ entry_exit.applicant_person|default:"نامشخص" }}
+                </span>
+            </div>
+            {% else %}
+            <div class="info-row" style="background-color: #e6f9ec; border-radius: 4px; padding: 5px;">
+    <span class="info-label">درخواست‌کننده / تحویل‌دهنده</span>
+    <span class="info-value">
+        <i class="fa-solid fa-truck-ramp-box" style="color: #28a745;"></i>
+        {{ entry_exit.applicant_person|default:"نامشخص" }}
+    </span>
+</div>
+            {% endif %}
+            <div class="info-row">
+                <span class="info-label">زمان ثبت</span>
+                <span class="info-value" style="direction: ltr; text-align: right;">
+                    {{ entry_exit.created_at|date:"Y/m/d - H:i" }}
+                </span>
+            </div>
+
+            {% if entry_exit.description %}
+            <div class="info-row full-row">
+                <span class="info-label">توضیحات / یادداشت</span>
+                <span class="info-value" style="font-weight: normal; font-size: 1rem;">
+                    {{ entry_exit.description }}
+                </span>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

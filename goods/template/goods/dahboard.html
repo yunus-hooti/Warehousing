@@ -1,0 +1,179 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}داشبورد اصلی{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>داشبورد اصلی</h1>
+</div>
+
+<section class="stat-cards-container">
+    {% if user.is_superuser %}
+    <div class="stat-card">
+        <div class="icon blue"><i class="fa-solid fa-users"></i></div>
+        <div class="info">
+            <h4>{{ suppliers }}</h4> {# از ویو ارسال می‌شود #}
+            <p>مشتریان فعال</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="stat-card">
+        <div class="icon green"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="info">
+            <h4>{{ goods_count }}</h4> {# از ویو ارسال می‌شود #}
+            <p>تعداد کل کالاها (SKU)</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon" style="background-color: #e8f5e9; color: var(--secondary-color);">
+            <i class="fa-solid fa-arrow-down"></i>
+        </div>
+        <div class="info">
+            <h4>{{ nu_entry }}</h4> {# از ویو ارسال می‌شود #}
+            <p>ورودی امروز</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon" style="background-color: #ffebee; color: var(--danger-color);">
+            <i class="fa-solid fa-arrow-up"></i>
+        </div>
+        <div class="info">
+            <h4>{{ nu_exit }}</h4> {# از ویو ارسال می‌شود #}
+            <p>خروجی امروز</p>
+        </div>
+    </div>
+</section>
+
+<section class="dashboard-grid">
+
+    <div class="dashboard-card">
+        <h3><i class="fa-solid fa-bolt" style="color: var(--warning-color);"></i> دسترسی سریع</h3>
+
+        {# --- شرط بررسی وضعیت کاربر --- #}
+        {# نکته: معمولاً برای تاییدیه مدیر از user.is_staff استفاده می‌شود #}
+        {% if not user.supplier_user.is_active %}
+        <div class="alert-warning-box">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>شما هنوز تایید نشده‌اید! امکان ثبت عملیات وجود ندارد.</span>
+        </div>
+        {% endif %}
+
+        <div class="quick-access-buttons">
+
+            {# دکمه ۱: ورود کالا #}
+            <a href="{% url 'entry_exit:entry_exit_entry' %}"
+               class="app-btn app-btn-primary {% if not user.supplier_user.is_active %}disabled-btn{% endif %}">
+                <i class="fa-solid fa-plus"></i> ثبت ورود کالا
+            </a>
+
+            {# دکمه ۲: خروج کالا #}
+            <a href="{% url 'entry_exit:entry_exit_exit' %}"
+               class="app-btn {% if not user.supplier_user.is_active %}disabled-btn{% endif %}"
+               style="background-color: var(--danger-color); color: white;">
+                <i class="fa-solid fa-minus"></i> ثبت خروج کالا
+            </a>
+
+            {# دکمه ۳: افزودن کالای جدید #}
+            <a href="{% url 'goods:add_goods' %}"
+               class="app-btn {% if not user.supplier_user.is_active %}disabled-btn{% endif %}"
+               style="background-color: var(--light-color); color: var(--dark-color);">
+                <i class="fa-solid fa-box"></i> افزودن کالای جدید
+            </a>
+
+            {# دکمه ۴: ثبت نام مشتری (این دکمه نباید غیرفعال شود تا کاربر بتواند ثبت نام کند) #}
+            {% if user.supplier_user is None %}
+            <a href="{% url 'supplier:send_supplier' %}" class="app-btn"
+               style="background-color: var(--dark-color); color: white;">
+                <i class="fa-solid fa-user-plus"></i> ثبت نام به عنوان مشتری
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="dashboard-sidebar-column">
+
+        <div class="dashboard-card">
+            <h3>ظرفیت انبار</h3>
+            <div class="capacity-text" style="padding-top: 15px;">
+                {# این بخش می‌تواند داینامیک شود #}
+                <strong>{{warehouse_full}}%</strong> (از 10,000 ) پر شده است
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h3>کالاهای رو به اتمام</h3>
+            <ul class="low-stock-list">
+                {% for good in running %}
+                {% if user.is_superuser %}
+                <li>
+                    <a href="{% url 'goods:detail_good' good.id %}">{{ good.name }}</a>
+                    <span>(موجودی: <strong>{{ good.amount }}</strong>)</span>
+                </li>
+                {% else %}
+
+                <li>
+                    <a href="{% url 'goods:detail_good' good.good.id %}">{{ good.good.name }}</a>
+                    <span>(موجودی: <strong>{{ good.number }}</strong>)</span>
+                </li>
+                {% endif %}
+                {% empty %}
+                <li>موردی یافت نشد.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+</section>
+
+<div class="inventory-container" style="margin-top: 25px;">
+    <div class="filter-section">
+        <h3 style="margin: 0;">آخرین تراکنش‌ها</h3>
+        <a href="{% url 'entry_exit:list_entry_exit' %}" class="app-btn" style="padding: 5px 10px;">مشاهده همه</a>
+    </div>
+
+    <div class="inventory-table-wrapper">
+        <table class="inventory-table">
+            <thead>
+            <tr>
+                <th>نوع</th>
+                <th>کالا</th>
+                <th>مشتری</th>
+                <th>تعداد</th>
+                <th>تاریخ</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for tx in entry_exit %}
+            <tr>
+                <td>
+                    {% if tx.type_of_operation == 'entry' %}
+                    <span class="status-badge in-stock">ورود</span>
+                    {% else %}
+                    <span class="status-badge out-of-stock">خروج</span>
+                    {% endif %}
+                </td>
+                <td><a href="{% url 'goods:detail_good' tx.good.id %}">{{ tx.good.name }}</a></td>
+                <td><a href="{% url 'supplier:detail_supplier' tx.supplier_good.id %}">{{ tx.supplier_good.company_name }}</a></td>
+                <td><strong>{{ tx.number }}</strong></td>
+                <td>{{ tx.created_at|date:"Y/m/d H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">هنوز تراکنشی ثبت نشده است.</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+{{ block.super }} {# فقط اسکریپت‌های base.html را نگه می‌دارد #}
+{% endblock %}

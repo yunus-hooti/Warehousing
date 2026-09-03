@@ -1,0 +1,327 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ثبت نام در سیستم</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --bg-color: #f4f7fc;
+            --text-color: #333;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tahoma', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            min-height: 100vh; /* تغییر به min-height برای اسکرول خوردن در صورت بلند بودن فرم */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            direction: rtl;
+            padding: 20px 0; /* فاصله از بالا و پایین */
+        }
+
+        .register-container {
+            background: white;
+            width: 100%;
+            max-width: 500px; /* کمی عریض‌تر از صفحه لاگین */
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .brand-logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--success-color), #81c784); /* رنگ سبز برای ثبت نام */
+            color: white;
+            font-size: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-size: 1.6rem;
+        }
+
+        p.subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        /* --- استایل فرم‌ها --- */
+        .form-row {
+            display: flex;
+            gap: 15px; /* فاصله بین دو ستون */
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            position: relative;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* نشانگر اجباری و اختیاری */
+        .required-star {
+            color: var(--error-color);
+            margin-right: 3px;
+        }
+
+        .optional-badge {
+            font-size: 0.75rem;
+            color: #999;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 5px;
+            font-weight: normal;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 38px; /* تنظیم دقیق */
+            right: 12px;
+            color: #aaa;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+            background-color: #fcfcfc;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            padding-top: 12px;
+        }
+
+        /* ایکون برای textarea باید بالاتر باشد */
+        textarea + .input-icon {
+            top: 38px;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--success-color); /* رنگ فوکوس سبز برای ثبت نام */
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+        }
+
+        input:focus + .input-icon, textarea:focus + .input-icon {
+            color: var(--success-color);
+        }
+
+        button.btn-register {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button.btn-register:hover {
+            background-color: #218838;
+        }
+
+        .login-box {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .login-box a {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .login-box a:hover { text-decoration: underline; }
+
+        /* --- استایل پیام‌ها (کپی شده از لاگین) --- */
+        .messages-list { list-style: none; margin-bottom: 20px; padding: 0; text-align: right; }
+        .alert { padding: 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; }
+        .alert-error-form { background-color: #ffebee; color: var(--error-color); border-color: #ffcdd2; margin-bottom: 20px; text-align: right;}
+        .alert-success { background-color: #e8f5e9; color: #2e7d32; border-color: #c8e6c9; }
+        .alert-error { background-color: #ffebee; color: #c62828; border-color: #ffcdd2; }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+
+        {% if messages %}
+        <div class="messages-list">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+            <div class="brand-logo"><i class="fa-solid fa-check"></i></div>
+            <h2>شما عضو هستید!</h2>
+            <p class="subtitle">برای ثبت نام اکانت جدید، ابتدا باید خارج شوید.</p>
+            <a href="{% url 'goods:dashboard_view' %}" style="display:block; margin-bottom:10px; text-decoration:none; color:#007bff;">بازگشت به داشبورد</a>
+        {% else %}
+            <div class="brand-logo">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+
+            <h2>ایجاد حساب کاربری</h2>
+            <p class="subtitle">لطفاً اطلاعات زیر را تکمیل کنید</p>
+
+            {% if form.errors %}
+            <div class="alert alert-error-form">
+                <i class="fa-solid fa-circle-exclamation" style="margin-left:5px;"></i>
+                <span>لطفاً خطاهای زیر را برطرف کنید:</span>
+                <ul style="margin-right: 20px; margin-top: 5px; font-size: 0.85rem;">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'account:registration' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username">نام کاربری <span class="required-star">*</span></label>
+                    <input type="text" name="username" id="id_username" placeholder="مثال: ali_rezaei" required>
+                    <i class="fa-solid fa-user input-icon"></i>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_phon">شماره تماس <span class="required-star">*</span></label>
+                            <input type="text" name="phon" id="id_phon" placeholder="0912..." required>
+                            <i class="fa-solid fa-mobile-screen input-icon"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_email">ایمیل <span class="required-star">*</span></label>
+                            <input type="email" name="email" id="id_email" placeholder="name@example.com" required>
+                            <i class="fa-solid fa-envelope input-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <hr style="border: 0; border-top: 1px dashed #ddd; margin: 10px 0 20px 0;">
+                <p style="text-align: right; font-size: 0.8rem; color: #888; margin-bottom: 15px;">اطلاعات تکمیلی (پر کردن این بخش‌ها الزامی نیست)</p>
+
+                <div class="form-row">
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_first_name">نام <span class="optional-badge">اختیاری</span></label>
+                            <input type="text" name="first_name" id="id_first_name" placeholder="نام خود را بنویسید">
+                            <i class="fa-solid fa-id-card input-icon"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                        <div class="form-group">
+                            <label for="id_last_name">نام خانوادگی <span class="optional-badge">اختیاری</span></label>
+                            <input type="text" name="last_name" id="id_last_name" placeholder="فامیل خود را بنویسید">
+                            <i class="fa-solid fa-id-card input-icon"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_address">آدرس <span class="optional-badge">اختیاری</span></label>
+                    <textarea name="address" id="id_address" placeholder="آدرس پستی خود را اینجا بنویسید..."></textarea>
+                    <i class="fa-solid fa-location-dot input-icon"></i>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-col">
+                         <div class="form-group">
+                            <label for="id_password">رمز عبور <span class="required-star">*</span></label>
+                            <input type="password" name="password1" id="id_password" required>
+                            <i class="fa-solid fa-lock input-icon"></i>
+                        </div>
+                    </div>
+                    <div class="form-col">
+                         <div class="form-group">
+                            <label for="id_confirm_password">تکرار رمز <span class="required-star">*</span></label>
+                            <input type="password" name="password2" id="id_confirm_password" required>
+                            <i class="fa-solid fa-check-double input-icon"></i>
+                        </div>
+                    </div>
+                 </div>
+
+
+                <button type="submit" class="btn-register">
+                    ثبت نام نهایی <i class="fa-solid fa-check" style="margin-right: 5px;"></i>
+                </button>
+            </form>
+
+            <div class="login-box">
+                قبلاً ثبت نام کرده‌اید؟
+                <a href="{% url 'account:login' %}">وارد شوید</a>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>

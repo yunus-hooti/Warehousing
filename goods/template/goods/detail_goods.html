@@ -1,0 +1,207 @@
+{% extends 'parent/base.html' %}
+
+
+{% block title %}جزئیات کالا: {{ good.name }}{% endblock %}
+
+{% block content %}
+
+    <div class="page-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+        <h1>جزئیات کالا: <span style="color: var(--primary-color);">{{ good.name }}</span></h1>
+        
+<!--        <div>-->
+<!--            <a href="#" class="app-btn" style="background-color: var(&#45;&#45;warning-color); color: white;">-->
+<!--                <i class="fa-solid fa-pen"></i>-->
+<!--                ویرایش کالا-->
+<!--            </a>-->
+<!--            <button class="app-btn" style="background-color: var(&#45;&#45;danger-color); color: white; margin-right: 10px;">-->
+<!--                <i class="fa-solid fa-trash"></i>-->
+<!--                حذف کالا-->
+<!--            </button>-->
+<!--        </div>-->
+    </div>
+    
+    <section class="detail-section-header stat-cards-container" style="margin-top: 20px;">
+        {% if user.is_superuser %}
+        {# کارت وضعیت موجودی #}
+        <div class="stat-card">
+            <div class="icon {% if good.amount > 10 %}green{% elif good.amount > 0 %}orange{% else %}red{% endif %}">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div class="info">
+                <h4>{{ good.amount }}</h4>
+                <p>موجودی فعلی (واحد)</p>
+            </div>
+        </div>
+
+        {# کارت مشتری مالک #}
+        <div class="stat-card">
+            <div class="icon blue"><i class="fa-solid fa-handshake"></i></div>
+            <div class="info">
+                <h4>{{ good.supplier_goods.company_name|default:"ندارد" }}</h4>
+                <p>مشتری (مالک کالا)</p>
+            </div>
+        </div>
+
+        {# کارت تاریخ ورود #}
+        <div class="stat-card">
+            <div class="icon orange"><i class="fa-regular fa-calendar-alt"></i></div>
+            <div class="info">
+                <h4>{{ good.created_at|date:"Y/m/d" }}</h4>
+                <p>تاریخ ثبت اولیه</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="inventory-container" style="margin-top: 25px;">
+        <div class="filter-section" style="justify-content: start;">
+            <h3 style="margin: 0;">اطلاعات فنی و مشخصات</h3>
+        </div>
+
+        <div class="detail-grid" style="padding: 20px;">
+
+            <div class="detail-item">
+                <span class="detail-label">نام کامل کالا:</span>
+                <span class="detail-value">{{ good.name }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">کد محصول (SKU):</span>
+                <span class="detail-value">{{ good.good_code }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">دسته‌بندی:</span>
+                <span class="detail-value">{{ good.category.name|default:"متفرقه" }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">تعداد: </span>
+                <span class="detail-value">{{ good.amount|default:"نامشخص" }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">مکان فعلی انبار:</span>
+                <span class="location-code detail-value">{{ good.location_code|default:"A00" }}</span>
+            </div>
+
+            <div class="detail-item full-width">
+                <span class="detail-label">توضیحات:</span>
+                <p class="detail-value-desc">{{ good.description|default:"توضیحاتی برای این کالا ثبت نشده است." }}</p>
+            </div>
+        </div>
+    </div>
+    {% else %}
+       {# کارت وضعیت موجودی #}
+        <div class="stat-card">
+            <div class="icon {% if good.amount > 10 %}green{% elif good.amount > 0 %}orange{% else %}red{% endif %}">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div class="info">
+                <h4>{{ good.good.amount }}</h4>
+                <p>موجودی فعلی (واحد)</p>
+            </div>
+        </div>
+
+        {# کارت مشتری مالک #}
+        <div class="stat-card">
+            <div class="icon blue"><i class="fa-solid fa-handshake"></i></div>
+            <div class="info">
+                <h4>{{ good.supplier_goods.company_name|default:"ندارد" }}</h4>
+                <p>مشتری (مالک کالا)</p>
+            </div>
+        </div>
+
+        {# کارت تاریخ ورود #}
+        <div class="stat-card">
+            <div class="icon orange"><i class="fa-regular fa-calendar-alt"></i></div>
+            <div class="info">
+                <h4>{{ good.good.created_at|date:"Y/m/d" }}</h4>
+                <p>تاریخ ثبت اولیه</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="inventory-container" style="margin-top: 25px;">
+        <div class="filter-section" style="justify-content: start;">
+            <h3 style="margin: 0;">اطلاعات فنی و مشخصات</h3>
+        </div>
+
+        <div class="detail-grid" style="padding: 20px;">
+
+            <div class="detail-item">
+                <span class="detail-label">نام کامل کالا:</span>
+                <span class="detail-value">{{ good.good.name }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">کد محصول (SKU):</span>
+                <span class="detail-value">{{ good.good.good_code }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">دسته‌بندی:</span>
+                <span class="detail-value">{{ good.good.category.name|default:"متفرقه" }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">تعداد: </span>
+                <span class="detail-value">{{ good.good.amount|default:"نامشخص" }}</span>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">مکان فعلی انبار:</span>
+                <span class="location-code detail-value">{{ good.good.location_code|default:"A00" }}</span>
+            </div>
+
+            <div class="detail-item full-width">
+                <span class="detail-label">توضیحات:</span>
+                <p class="detail-value-desc">{{ good.good.description|default:"توضیحاتی برای این کالا ثبت نشده است." }}</p>
+            </div>
+        </div>
+    </div>
+{% endif %}
+    <div class="inventory-container" style="margin-top: 25px;">
+        <div class="filter-section" style="justify-content: start;">
+            <h3 style="margin: 0;">تاریخچه ورود و خروج (آخرین ۲۰ مورد)</h3>
+        </div>
+        
+        <div class="inventory-table-wrapper">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">تاریخ</th>
+                        <th style="width: 120px;">نوع عملیات</th>
+                        <th>تعداد</th>
+                        <th>توسط</th>
+                        <th>سفارش مرتبط</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {# فرض می‌کنیم good.history شامل لیست فعالیت‌های این کالا باشد #}
+                    {% for action in entry %}
+                    <tr>
+                        <td>{{ action.created_at|date:"Y/m/d H:i" }}</td>
+                        <td>
+                            {% if action.type_of_operation == 'entry' %}
+                                <span class="status-badge in-stock">ورود</span>
+                            {% elif action.type_of_operation == 'exit' %}
+                                <span class="status-badge out-of-stock">خروج</span>
+                            {% else %}
+                                <span class="status-badge low-stock">تنظیم</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ action.number }}</strong></td>
+                        <td>{{ action.supplier_good|default:"سیستم" }}</td>
+                        <td><a href="#">{{ action.order_id|default:"-" }}</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: #777;">هیچ سابقه فعالیتی برای این کالا یافت نشد.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+{% endblock %}

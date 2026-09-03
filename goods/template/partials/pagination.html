@@ -1,0 +1,40 @@
+{# templates/partials/pagination.html #}
+
+{# این کامپوننت دو متغیر می‌خواهد: #}
+{# 1. page_obj: آبجکت صفحه‌بندی که از ویو می‌آید #}
+{# 2. query_params: رشته پارامترهای URL برای حفظ فیلترها #}
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    
+    {% if page_obj.has_previous %}
+        <a href="?{{ query_params }}&page={{ page_obj.previous_page_number }}"><i class="fa-solid fa-chevron-right"></i></a>
+    {% else %}
+        <a href="#" class="disabled"><i class="fa-solid fa-chevron-right"></i></a>
+    {% endif %}
+
+    
+    {% for i in page_obj.paginator.page_range %}
+        {% if page_obj.number == i %}
+            <a href="#" class="active">{{ i }}</a>
+            
+        {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+            <a href="?{{ query_params }}&page={{ i }}">{{ i }}</a>
+            
+        {% elif i == 1 or i == page_obj.paginator.num_pages %}
+            <a href="?{{ query_params }}&page={{ i }}">{{ i }}</a>
+            
+        {% elif i == page_obj.number|add:'-3' or i == page_obj.number|add:'3' %}
+            <span>...</span>
+        {% endif %}
+    {% endfor %}
+
+    
+    {% if page_obj.has_next %}
+        <a href="?{{ query_params }}&page={{ page_obj.next_page_number }}"><i class="fa-solid fa-chevron-left"></i></a>
+    {% else %}
+        <a href="#" class="disabled"><i class="fa-solid fa-chevron-left"></i></a>
+    {% endif %}
+
+</div>
+{% endif %}

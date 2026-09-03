@@ -1,0 +1,341 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ورود به سیستم انبارداری</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --primary-hover: #0056b3;
+            --bg-color: #f4f7fc;
+            --text-color: #333;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tahoma', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            direction: rtl;
+        }
+
+        .login-container {
+            background: white;
+            width: 100%;
+            max-width: 420px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), #00d2ff);
+            color: white;
+            font-size: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+        }
+
+        /* حالت لاگین شده */
+        .logged-in-state .brand-logo {
+            background: linear-gradient(135deg, var(--success-color), #81c784);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        h2 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-size: 1.6rem;
+        }
+
+        p.subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .input-icon {
+            position: absolute;
+            top: 42px;
+            right: 15px;
+            color: #aaa;
+            transition: 0.3s;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 45px 14px 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+            background-color: #fcfcfc;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1);
+        }
+
+        input:focus + .input-icon {
+            color: var(--primary-color);
+        }
+
+        button.btn-login, a.btn-dashboard {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        button.btn-login:hover, a.btn-dashboard:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .user-info-box {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .form-options {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .forgot-link {
+            color: #666;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .forgot-link:hover {
+            color: var(--primary-color);
+        }
+
+        .register-box {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .register-box a {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+
+        .register-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- استایل‌های مسیج باکس (جدید) --- */
+        .messages-list {
+            list-style: none;
+            margin-bottom: 20px;
+            padding: 0;
+            text-align: right;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid transparent;
+        }
+
+        /* استایل ارور فرم (پیش‌فرض) */
+        .alert-error-form {
+            background-color: #ffebee;
+            color: var(--error-color);
+            border-color: #ffcdd2;
+        }
+
+        /* استایل مسیج‌های جنگو بر اساس تگ */
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border-color: #c8e6c9;
+        }
+
+        .alert-error, .alert-danger {
+            background-color: #ffebee;
+            color: #c62828;
+            border-color: #ffcdd2;
+        }
+
+        .alert-warning {
+            background-color: #fff3e0;
+            color: #ef6c00;
+            border-color: #ffe0b2;
+        }
+
+        .alert-info {
+            background-color: #e1f5fe;
+            color: #0277bd;
+            border-color: #b3e5fc;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container {% if request.user.is_authenticated %}logged-in-state{% endif %}">
+
+        {% if messages %}
+        <div class="messages-list">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {% if message.tags == 'success' %}
+                        <i class="fa-solid fa-check-circle"></i>
+                    {% elif message.tags == 'error' or message.tags == 'wrong' %}
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                    {% elif message.tags == 'warning' %}
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    {% else %}
+                        <i class="fa-solid fa-circle-info"></i>
+                    {% endif %}
+
+                    <span>{{ message }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% if request.user.is_authenticated %}
+
+            <div class="brand-logo">
+                <i class="fa-solid fa-check"></i>
+            </div>
+
+            <h2>خوش آمدید!</h2>
+            <p class="subtitle">شما در حال حاضر وارد سیستم شده‌اید.</p>
+
+            <div class="user-info-box">
+                <i class="fa-solid fa-user-circle"></i>
+                نام کاربری شما: <strong>{{ request.user.username }}</strong>
+            </div>
+
+            <a href="{% url 'goods:dashboard_view' %}" class="btn-dashboard"> رفتن به داشبورد <i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i>
+            </a>
+
+            <div style="margin-top: 15px;">
+                <form action="{% url 'account:logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" style="background: none; border: none; color: #dc3545; cursor: pointer; font-size: 0.9rem;">
+                        خروج از حساب کاربری
+                    </button>
+                </form>
+            </div>
+
+        {% else %}
+
+            <div class="brand-logo">
+                <i class="fa-solid fa-cubes-stacked"></i>
+            </div>
+
+            <h2>سیستم مدیریت انبار</h2>
+            <p class="subtitle">برای دسترسی به پنل، وارد شوید</p>
+
+            {% if form.errors %}
+            <div class="alert alert-error-form">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>نام کاربری یا رمز عبور اشتباه است.</span>
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'account:login' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ next }}">
+
+                <div class="form-group">
+                    <label for="id_username">نام کاربری</label>
+                    <input type="text" name="username" id="id_username" placeholder="مثال: admin" required autofocus>
+                    <i class="fa-solid fa-user input-icon"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password">رمز عبور</label>
+                    <input type="password" name="password" id="id_password" placeholder="••••••••" required>
+                    <i class="fa-solid fa-lock input-icon"></i>
+                </div>
+
+                <div class="form-options">
+                    <a href="{% url 'account:password_resetView' %}" class="forgot-link">
+                        رمز عبور خود را فراموش کرده‌اید؟
+                    </a>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    ورود به سیستم <i class="fa-solid fa-arrow-left" style="margin-right: 5px;"></i>
+                </button>
+            </form>
+
+            <div class="register-box">
+                حساب کاربری ندارید؟
+                <a href="{% url 'account:registration' %}">ثبت نام کنید</a>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

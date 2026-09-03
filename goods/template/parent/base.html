@@ -1,0 +1,111 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# بلوک Title برای هر صفحه #}
+    <title>{% block title %}داشبورد انبار (3PL){% endblock %}</title>
+
+    {# فونت و آیکن‌ها #}
+    <link href="https://cdn.fontcdn.ir/Font/Persian/Vazir/Vazir.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    {# لینک به فایل استایل‌های تفکیک شده #}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fa-solid fa-boxes-stacked"></i> انبار (3PL)</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                {# لینک‌های سایدبار #}
+                <li><a href="{% url 'goods:dashboard_view' %}"><i class="fa-solid fa-chart-pie"></i> داشبورد</a></li>
+                {% if user.supplier_user %}
+                <li><a href="{% url 'goods:list_goods' %}" class="{% if request.resolver_match.url_name == 'list_goods' %}active{% endif %}"><i class="fa-solid fa-box">موجودی انبار</i> </a></li>
+                {% endif %}
+                {% if user.is_superuser %}
+                <li><a href="{% url 'supplier:list_supplier' %}"><i class="fa-solid fa-handshake"></i> مدیریت مشتریان</a></li>
+                {% endif %}
+                <li><a href="{% url 'entry_exit:list_entry_exit' %}"><i class="fa-solid fa-truck-fast"></i> سفارشات (ورود/خروج)</a></li>
+                <li><a href="#"><i class="fa-solid fa-chart-line"></i> گزارشات</a></li>
+                <li><a href="#"><i class="fa-solid fa-gear"></i> تنظیمات</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="app-main-content">
+
+        <header class="app-main-header">
+            <div class="header-search-box">
+                <i class="fa-solid fa-search"></i>
+                <form method="get" action="{% url 'goods:search_goods' %}">
+                    <input type="text" name="query" placeholder="جستجو بر اساس نام کالا، کد، یا مشتری...">
+                </form>
+            </div>
+            <div class="header-user-profile">
+                <i class="fa-regular fa-bell"></i>
+                <i class="fa-regular fa-envelope"></i>
+                <a href="{% url 'account:profile' %}" >{{user.username}}</a>
+            </div>
+        </header>
+
+        <main class="page-content">
+            {% block content %}
+                {# محتوای اختصاصی هر صفحه (مثلاً لیست کالاها) اینجا قرار می‌گیرد #}
+            {% endblock %}
+        </main>
+
+        <footer class="app-footer">
+            تمامی حقوق این سامانه متعلق به انبارداری (3PL) است. &copy; 2024
+        </footer>
+
+    </div>
+
+    {# بلوک JS برای اسکریپت‌های اختصاصی هر صفحه #}
+    {% block scripts %}
+        {# اسکریپت اصلی برای دکمه "بیشتر..." در اینجا قرار می‌گیرد #}
+        <script>
+            if (document.getElementById('toggleCategories')) {
+                document.getElementById('toggleCategories').addEventListener('click', function() {
+                    const hiddenChips = document.querySelectorAll('#categoryFilters .category-chip.hidden');
+                    hiddenChips.forEach(chip => {
+                        chip.classList.remove('hidden');
+                    });
+                    this.style.display = 'none';
+                });
+            }
+        document.addEventListener('DOMContentLoaded', function() {
+            // یافتن همه فرم‌ها
+            const forms = document.querySelectorAll('form');
+
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    // دکمه سابمیت را پیدا کن
+                    const btn = this.querySelector('button[type="submit"]');
+
+                    if (btn && !btn.disabled) {
+                        // 1. تغییر متن دکمه
+                        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> در حال پردازش...';
+
+                        // 2. غیرفعال کردن دکمه (مهم‌ترین گام)
+                        // تاخیر کوچک برای تضمین ثبت فرم قبل از غیرفعال شدن
+                        setTimeout(() => {
+                            btn.disabled = true;
+                            btn.classList.add('disabled');
+                        }, 10);
+                    }
+                });
+            });
+        });
+        </script>
+    {% endblock %}
+
+</body>
+</html>

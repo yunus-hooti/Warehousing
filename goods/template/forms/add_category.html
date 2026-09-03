@@ -1,0 +1,53 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}ثبت دسته‌بندی جدید{% endblock %}
+
+{% block content %}
+
+<form method="post" class="styled-form-page">
+    {% csrf_token %}
+
+    <div class="page-header">
+        <h1>
+            <i class="fa-solid fa-layer-group" style="color: var(--primary-color);"></i>
+            ثبت دسته‌بندی جدید
+        </h1>
+        
+        <div class="form-actions-header">
+            {# دکمه انصراف #}
+            <a href="{% url 'goods:list_goods' %}" class="app-btn" style="background-color: var(--light-color); color: #555;">
+                <i class="fa-solid fa-times"> انصراف</i>
+            </a>
+            <input type="hidden" name="submission_token" value="{{ submission_token }}">
+            {# دکمه ذخیره #}
+            <button type="submit" class="app-btn app-btn-primary" style="margin-right: 10px;">
+                <i class="fa-solid fa-check"> ذخیره</i>
+            </button>
+        </div>
+    </div>
+
+    <div class="inventory-container form-page-container" style="max-width: 600px;">
+        
+        <div class="styled-form-wrapper">
+            
+            {{ form.non_field_errors }}
+
+            <div class="form-group full-width">
+                <label for="{{ form.name.id_for_label }}">
+                    <span>نام دسته‌بندی</span>
+                    <span class="required-star">*</span>
+                </label>
+                
+                {{ form.name }}
+                
+                <p class="form-text">مثال: الکترونیک، مواد غذایی، قطعات یدکی</p>
+                <div class="field-errors">{{ form.name.errors }}</div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

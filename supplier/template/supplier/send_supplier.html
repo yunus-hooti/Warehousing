@@ -1,0 +1,113 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}ثبت طرف قرارداد جدید{% endblock %}
+
+{% block content %}
+
+<form method="post" class="styled-form-page">
+    {% csrf_token %}
+
+    <div class="page-header">
+        <h1>
+            <i class="fa-solid fa-user-group" style="color: var(--primary-color);"></i>
+            ثبت طرف قرارداد (مالک کالا)
+        </h1>
+
+        <div class="header-actions">
+            {# دکمه انصراف #}
+            <a href="{% url 'supplier:list_supplier' %}" class="app-btn"
+               style="background-color: var(--light-color); color: #555;">
+                <i class="fa-solid fa-times"></i> انصراف
+            </a>
+            {# دکمه ذخیره #}
+            <button type="submit" class="app-btn app-btn-primary" style="margin-right: 10px;">
+                <i class="fa-solid fa-check"></i> ذخیره اطلاعات
+            </button>
+        </div>
+    </div>
+
+    <div class="inventory-container form-page-container">
+
+        <div class="styled-form-wrapper">
+
+            {{ form.non_field_errors }}
+
+            <div class="grid-col-2">
+
+                {# ستون ۱ (راست): اطلاعات پایه #}
+                <div class="form-group">
+                    <label for="{{ form.company_name.id_for_label }}">
+                        <span>نام شرکت / اسم (طرف قرارداد)</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.company_name }}
+                    <div class="field-errors">{{ form.company_name.errors }}</div>
+                </div>
+                {# ستون ۲ (چپ): نماینده #}
+                <div class="form-group">
+                    <label for="{{ form.contact_person.id_for_label }}">
+                        <span>اسم شخص مسيول / نماینده</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.contact_person }}
+                    <div class="field-errors">{{ form.contact_person.errors }}</div>
+                </div>
+
+                {# ستون ۱ (راست): تلفن #}
+                <div class="form-group">
+                    <label for="{{ form.phone_number.id_for_label }}">
+                        <span>شماره تلفن</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.phone_number }}
+                    <div class="field-errors">{{ form.phone_number.errors }}</div>
+                </div>
+
+                {# ستون ۲ (چپ): ایمیل #}
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">
+                        <span>ایمیل</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.email }}
+                    <div class="field-errors">{{ form.email.errors }}</div>
+                </div>
+
+                {# ستون ۱ (راست): شناسه رسمی #}
+                <div class="form-group">
+                    <label for="{{ form.national_id.id_for_label }}">
+                        <span>شناسه ملی یا کد اقتصادی</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.national_id }}
+                    <div class="field-errors">{{ form.national_id.errors }}</div>
+                </div>
+
+                {# ستون ۲ (چپ): وبسایت (اختیاری) #}
+                <div class="form-group">
+                    <label for="{{ form.website.id_for_label }}">
+                        <span>آدرس وبسایت (اختیاری)</span>
+                    </label>
+                    {{ form.website }}
+                    <div class="field-errors">{{ form.website.errors }}</div>
+                </div>
+
+            </div>
+
+            {# فیلد آدرس (تمام عرض) #}
+            <div class="form-group full-width">
+                <label for="{{ form.address.id_for_label }}">
+                    <span>آدرس کامل پستی</span>
+                    <span class="required-star">*</span>
+                </label>
+                {{ form.address }}
+                <div class="field-errors">{{ form.address.errors }}</div>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}

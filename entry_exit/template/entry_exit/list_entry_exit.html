@@ -1,0 +1,183 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{# تغییر عنوان صفحه #}
+{% block title %}تاریخچه ورود و خروج{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+{{ message }}
+{% endfor %}
+{% endif %}
+
+<div class="page-header">
+    <h1>مدیریت ورود و خروج</h1>
+
+    {# دکمه‌های ثبت جدید #}
+    <div>
+        <a href="{% url 'entry_exit:entry_exit_entry' %}" class="app-btn {% if not user.supplier_user.is_active %}disabled-btn{% endif %}"
+           style="background-color: var(--secondary-color); color: white;">
+            <i class="fa-solid fa-arrow-down"></i>
+            ثبت ورود جدید (Check-In)
+        </a>
+        <a href="{% url 'entry_exit:entry_exit_exit' %}" class="app-btn {% if not user.supplier_user.is_active %}disabled-btn{% endif %}"
+           style="background-color: var(--danger-color); color: white; margin-right: 10px;">
+            <i class="fa-solid fa-arrow-up"></i>
+            ثبت خروج جدید (Check-Out)
+        </a>
+    </div>
+</div>
+
+<section class="stat-cards-container">
+    {% if user.is_superuser %}
+    <div class="stat-card">
+        <div class="icon green"><i class="fa-solid fa-arrow-down"></i></div>
+        <div class="info">
+            <h4>{{login}}</h4> {# مثال: تعداد ورودهای امروز #}
+            <p>تعداد ورود (امروز)</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon red"><i class="fa-solid fa-arrow-up"></i></div>
+        <div class="info">
+            <h4>{{departures}}</h4> {# مثال: تعداد خروجی‌های امروز #}
+            <p>تعداد خروج (امروز)</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon blue"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="info">
+            <h4>{{days30}}</h4> {# مثال: کل تراکنش‌های ماه #}
+            <p>کل تراکنش‌ها (این ماه)</p>
+        </div>
+    </div>
+    {% else %}
+        <div class="stat-card">
+        <div class="icon green"><i class="fa-solid fa-arrow-down"></i></div>
+        <div class="info">
+            <h4>{{login}}</h4> {# مثال: تعداد ورودهای امروز #}
+            <p>تعداد ورود (امروز)</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon red"><i class="fa-solid fa-arrow-up"></i></div>
+        <div class="info">
+            <h4>{{departures}}</h4> {# مثال: تعداد خروجی‌های امروز #}
+            <p>تعداد خروج (امروز)</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon blue"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="info">
+            <h4>{{days30}}</h4> {# مثال: کل تراکنش‌های ماه #}
+            <p>کل تراکنش‌ها (این ماه)</p>
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<div class="inventory-container" style="margin-top: 25px;">
+
+    <div class="filter-section">
+        <div class="category-filters">
+            <span class="category-chip active"><a href="{% url 'entry_exit:list_entry_exit' %}">همه تراکنش‌ها</a></span>
+            <span class="category-chip"><a
+                    href="{% url 'entry_exit:list_entry_exit_filters' 'entry' %}">فقط ورودی‌ها</a></span>
+            <span class="category-chip"><a href="{% url 'entry_exit:list_entry_exit_filters' 'exit' %}">فقط خروجی‌ها</a></span>
+        </div>
+        {# در اینجا می‌توانید فیلتر تاریخ هم اضافه کنید #}
+    </div>
+
+    <div class="inventory-table-wrapper">
+        <table class="inventory-table">
+            <thead>
+            <tr>
+                <th>کالا</th>
+                <th>شماره پیگیری</th>
+                <th>نوع عملیات</th>
+                <th>تعداد</th>
+                <th>تاریخ و ساعت</th>
+                <th>کاربر ثبت‌کننده</th>
+<th style="text-align: center;">وضعیت تایید</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            {# فرض می‌کنیم لیستی به نام 'transactions' از ویو ارسال شده #}
+            {% for tx in list_entry_exit %}
+            <tr>
+                <td>
+                    {# لینک به صفحه جزئیات کالا #}
+
+                    <a href="{% url 'entry_exit:detail_entry_exit' tx.id %}" class="product-name" style="text-decoration: none;">
+                        {{ tx.good.name }}
+                    </a>
+                </td>
+                <td>
+                    {# لینک به صفحه جزئیات مشتری #}
+                        {{ tx.id }}
+                </td>
+                <td>
+                    {# استفاده از نشانگر وضعیت برای ورود/خروج #}
+                    {% if tx.type_of_operation == 'entry' %}
+                    <span class="status-badge in-stock">
+                                <i class="fa-solid fa-arrow-down" style="margin-left: 5px;"></i> ورود
+                            </span>
+                    {% elif tx.type_of_operation == 'exit' %}
+                    <span class="status-badge out-of-stock">
+                                <i class="fa-solid fa-arrow-up" style="margin-left: 5px;"></i> خروج
+                            </span>
+                    {% endif %}
+                </td>
+                <td><strong>{{ tx.number }}</strong></td>
+                <td>{{ tx.created_at|date:"Y/m/d - H:i" }}</td>
+                <td>{{ tx.registering_user.username|default:"سیستم" }}</td>
+
+                <td style="text-align: center; font-size: 1.2rem;">
+                {% if tx.is_active %}
+                    {# حالت تایید شده: تیک سبز #}
+                    <i class="fa-solid fa-circle-check" title="تایید شده" style="color: #28a745; cursor: help;"></i>
+                {% else %}
+                    {# حالت تایید نشده: ضربدر قرمز #}
+                    <i class="fa-solid fa-circle-xmark" title="در انتظار تایید / رد شده" style="color: #dc3545; cursor: help;"></i>
+                {% endif %}
+            </td>
+                <td>
+                    <div class="actions-menu">
+                        <button class="actions-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        <div class="actions-dropdown">
+                            <a href="{% url 'goods:detail_good' tx.good.id %}"><i class="fa-solid fa-box"></i> مشاهده
+                                کالا</a>
+                            {% if user.is_superuser %}
+                            <a href="{% url 'supplier:detail_supplier' tx.supplier_good.id %}"><i class="fa-solid fa-user"></i> مشاهده مشتری</a>
+                            {% endif %}
+                            {# معمولاً تراکنش‌ها حذف یا ویرایش نمی‌شوند، مگر در موارد خاص #}
+                            <a href="{% url 'entry_exit:pdf_receipt' tx.id %}" target="_blank">
+                                <i class="fa-solid fa-print"></i> چاپ رسید
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #777; padding: 30px;">
+                    هیچ تراکنش ورود یا خروجی ثبت نشده است.
+                </td>
+            </tr>
+            {% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+    <div>
+        {% include 'partials/pagination.html' with page_obj=list_entry_exit query_params=query_params %}
+
+    </div>
+
+</div>
+
+{% endblock %}

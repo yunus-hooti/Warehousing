@@ -1,0 +1,89 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}ثبت کالای جدید{% endblock %}
+
+{% block content %}
+
+<form method="post" class="styled-form-page">
+    {% csrf_token %}
+
+    <div class="page-header">
+        <h1>
+            <i class="fa-solid fa-plus-circle" style="color: var(--primary-color);"></i>
+            ثبت کالای جدید
+        </h1>
+
+        <div class="form-actions-header">
+            <a href="{% url 'goods:list_goods' %}" class="app-btn"
+               style="background-color: var(--light-color); color: #555;">
+                <i class="fa-solid fa-times"></i> انصراف
+            </a>
+            <input type="hidden" name="submission_token" value="{{ submission_token }}">
+            <button type="submit" class="app-btn app-btn-primary" style="margin-right: 10px;">
+                <i class="fa-solid fa-save"></i> ذخیره کالا
+            </button>
+        </div>
+    </div>
+
+    <div class="inventory-container form-page-container">
+
+        <div class="styled-form-wrapper">
+
+            {# نمایش خطاهای کلی فرم #}
+            {{ form.non_field_errors }}
+
+            <div class="form-grid-polished">
+
+                <div class="form-group full-width">
+                    <label for="{{ form.name.id_for_label }}">
+                        <span>نام کالا</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.name }}
+                    <p class="form-text">این نام به مشتریان نمایش داده می‌شود.</p>
+                    <div class="field-errors">{{ form.name.errors }}</div>
+                </div>
+
+                <div class="form-group select-wrapper">
+                    <label for="{{ form.category.id_for_label }}">دسته‌بندی</label>
+                    {{ form.category }}
+                    <p class="form-text">کالا را در گروه صحیح قرار دهید.</p>
+                    <div class="field-errors">{{ form.category.errors }}</div>
+                </div>
+
+                {% if user.is_superuser %}
+                <div class="form-group select-wrapper">
+                    <label for="{{ form.suppliers.id_for_label }}">
+                        <span>تامین‌کننده (مشتری)</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.suppliers }}
+                    <p class="form-text">مالک این کالا را مشخص کنید.</p>
+                    <div class="field-errors">{{ form.suppliers.errors }}</div>
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="{{ form.amount.id_for_label }}">تعداد (موجودی اولیه)</label>
+                    {{ form.amount }}
+                    <p class="form-text">تعداد ورودی اولیه به انبار.</p>
+                    <div class="field-errors">{{ form.amount.errors }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.requester_name.id_for_label }}">
+                        <span>نام درخواست‌کننده / تحویل‌دهنده</span>
+                        <span class="required-star">*</span>
+                    </label>
+
+                    {{ form.requester_name }}
+
+                    <p class="form-text">نام شخصی که درخواست ثبت این کالای جدید را دارد.</p>
+                    <div class="field-errors">{{ form.requester_name.errors }}</div>
+                </div>
+                </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

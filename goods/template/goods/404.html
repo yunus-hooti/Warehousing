@@ -1,0 +1,29 @@
+{% extends "parent/base.html" %} 
+{% load static %}
+
+{% block title %}صفحه پیدا نشد (۴۰۴){% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 50px;">
+    <h1>
+        <i class="fa-solid fa-triangle-exclamation" style="color: #ffc107;"></i>
+        خطای ۴۰۴
+    </h1>
+    <h2 style="color: #6c757d;">متأسفانه، صفحه‌ای که به دنبال آن هستید پیدا نشد!</h2>
+    
+    <p style="margin-top: 30px; font-size: 1.1em;">
+        آدرس وارد شده ممکن است اشتباه باشد یا صفحه مورد نظر حذف شده است.
+    </p>
+
+    <a href="{% url 'goods:list_goods' %}"
+       style="display: inline-block; margin-top: 20px; padding: 10px 20px; 
+              background-color: var(--primary-color, #007bff); color: white; 
+              text-decoration: none; border-radius: 5px;">
+        بازگشت به صفحه اصلی
+    </a>
+    
+    <p style="margin-top: 20px; font-size: 0.9em; color: #aaa;">
+        (کد خطا: ۴۰۴)
+    </p>
+</div>
+{% endblock %}

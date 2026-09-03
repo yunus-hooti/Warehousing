@@ -1,0 +1,151 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{# فرض می‌کنیم آبجکت مشتری با نام 'supplier' از ویو ارسال شده #}
+{% block title %}جزئیات مشتری: {{ supplier.company_name }}{% endblock %}
+
+{% block content %}
+
+<div class="page-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px;">
+    {# نام برند یا شرکت #}
+    <h1>{{ supplier.company_name }}</h1>
+</div>
+
+<section class="stat-cards-container" style="margin-top: 20px;">
+
+    {# کارت وضعیت (فعال/غیرفعال) #}
+    <div class="stat-card">
+        <div class="icon {% if supplier.is_active %}green{% else %}red{% endif %}">
+            <i class="fa-solid {% if supplier.is_active %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+        </div>
+        <div class="info">
+            <h4>{% if supplier.is_active %}فعال{% else %}غیرفعال{% endif %}</h4>
+            <p>وضعیت حساب</p>
+        </div>
+    </div>
+
+    {# کارت تعداد کالاهای مشتری #}
+    <div class="stat-card">
+        <div class="icon blue"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="info">
+            {# فرض: مدل Good به Supplier با related_name='goods' وصل است #}
+
+            <h4>{{ good_supplier.count }}</h4>
+            <p>تعداد کالاها در انبار</p>
+        </div>
+    </div>
+
+    {# کارت زمان ثبت #}
+    <div class="stat-card">
+        <div class="icon orange"><i class="fa-regular fa-calendar-alt"></i></div>
+        <div class="info">
+            <h4>{{ supplier.created_at|date:"Y/m/d" }}</h4>
+            <p>زمان ثبت در سیستم</p>
+        </div>
+    </div>
+</section>
+
+<div class="inventory-container" style="margin-top: 25px;">
+    <div class="filter-section" style="justify-content: start;">
+        <h3 style="margin: 0;">اطلاعات تماس و مشخصات</h3>
+    </div>
+
+    {# استفاده از همان استایل گرید که در good_detail.html استفاده شد #}
+    <div class="detail-grid" style="padding: 20px;">
+
+        <div class="detail-item">
+            <span class="detail-label">نام برند (شرکت):</span>
+            <span class="detail-value">{{ supplier.company_name }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">نام مشتری (رابط):</span>
+            <span class="detail-value">{{ supplier.contact_person }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">ایمیل:</span>
+            <span class="detail-value">{{ supplier.email }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">شماره تلفن:</span>
+            <span class="detail-value">{{ supplier.phone_number }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">شناسه اقتصادی:</span>
+            <span class="detail-value">{{ supplier.national_id|default:"ثبت نشده" }}</span>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">لینک وبسایت:</span>
+            <span class="detail-value">
+                    {% if supplier.website %}
+                        <a href="{{ supplier.website }}" target="_blank" rel="noopener noreferrer">{{ supplier.website }}</a>
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+                </span>
+        </div>
+
+        <div class="detail-item full-width">
+            <span class="detail-label">آدرس (محل شرکت):</span>
+            <p class="detail-value-desc">{{ supplier.address|default:"آدرسی ثبت نشده است." }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="inventory-container" style="margin-top: 25px;">
+    <div class="filter-section" style="justify-content: start;">
+        <h3 style="margin: 0;">لیست کالاهای این مشتری در انبار</h3>
+    </div>
+
+    <div class="inventory-table-wrapper">
+        <table class="inventory-table">
+            <thead>
+            <tr>
+                <th>نام کالا</th>
+                <th>کد محصول (SKU)</th>
+                <th>تعداد موجود</th>
+                <th>وضعیت</th>
+                <th style="width: 150px;">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            {# حلقه روی کالاهای مرتبط با این مشتری #}
+            {% for good in good_supplier %}
+            <tr>
+                <td>
+                    <div class="product-name">{{ good.good.name }}</div>
+                </td>
+                <td>{{ good.good.good_code }}</td>
+                <td><strong>{{ good.number }}</strong></td>
+                <td>
+                    {% if good.good.amount > 0 %}
+                    <span class="status-badge in-stock">موجود</span>
+                    {% else %}
+                    <span class="status-badge out-of-stock">ناموجود</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {# لینک مستقیم به جزئیات همان کالا #}
+                    <a href="{% url 'goods:detail_good' good.id %}" class="app-btn"
+                       style="padding: 5px 10px; background-color: var(--light-color); color: var(--primary-color);">
+                        <i class="fa-solid fa-eye"></i> مشاهده کالا
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: #777; padding: 30px;">
+                    این مشتری در حال حاضر هیچ کالایی در انبار ندارد.
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

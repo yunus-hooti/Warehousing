@@ -1,0 +1,845 @@
+/* base.css */
+:root {
+    --primary-color: #3498db; /* آبی */
+    --secondary-color: #2ecc71; /* سبز */
+    --danger-color: #e74c3c; /* قرمز */
+    --warning-color: #f39c12; /* نارنجی */
+    --light-color: #ecf0f1; /* خاکستری خیلی روشن */
+    --dark-color: #2c3e50; /* سرمه‌ای */
+    --bg-color: #f9f9f9; /* پس‌زمینه اصلی */
+    --sidebar-bg: #ffffff;
+    --header-bg: #ffffff;
+    --table-header-bg: #f1f3f5;
+    --border-color: #e0e0e0;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+body {
+    font-family: 'Vazir', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background-color: var(--bg-color);
+    color: var(--dark-color);
+}
+
+/* ---------------------------------
+   SIDEBAR (نوار کناری)
+   --------------------------------- */
+.app-sidebar {
+    width: 250px;
+    background-color: var(--sidebar-bg);
+    border-left: 1px solid var(--border-color);
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px 0;
+    box-shadow: var(--shadow);
+    z-index: 100;
+}
+.sidebar-header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+.sidebar-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+    font-size: 22px;
+}
+.sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: #555;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+    border-right: 4px solid var(--primary-color);
+}
+.sidebar-nav a i {
+    width: 20px;
+    text-align: center;
+}
+
+/* ---------------------------------
+   MAIN CONTENT (محتوای اصلی)
+   --------------------------------- */
+.app-main-content {
+    margin-right: 250px; /* به اندازه عرض سایدبار */
+    width: calc(100% - 250px);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ---------------------------------
+   HEADER (هدر)
+   --------------------------------- */
+.app-main-header {
+    background-color: var(--header-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+.header-search-box {
+    position: relative;
+    width: 400px;
+}
+.header-search-box input {
+    width: 100%;
+    padding: 10px 40px 10px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-family: 'Vazir', sans-serif;
+    font-size: 15px;
+    transition: all 0.3s ease;
+}
+.header-search-box input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+.header-search-box i {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+.header-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.header-user-profile i {
+    font-size: 20px;
+    color: #777;
+    cursor: pointer;
+}
+.header-user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* ---------------------------------
+   PAGE CONTENT (محتوای صفحه)
+   --------------------------------- */
+.page-content {
+    padding: 30px;
+    flex-grow: 1; /* اجازه می‌دهد محتوا کل فضای موجود را پر کند */
+}
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.page-header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+.app-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Vazir', sans-serif;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.app-btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.app-btn-primary:hover {
+    background-color: #2980b9;
+}
+
+
+/* ---------------------------------
+   STAT CARDS (کارت‌های آمار)
+   --------------------------------- */
+.stat-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+.stat-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.stat-card .icon {
+    font-size: 28px;
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.stat-card .icon.green { background-color: #e8f5e9; color: var(--secondary-color); }
+.stat-card .icon.blue { background-color: #e3f2fd; color: var(--primary-color); }
+.stat-card .icon.orange { background-color: #fff8e1; color: var(--warning-color); }
+.stat-card .icon.red { background-color: #ffebee; color: var(--danger-color); }
+.stat-card .info h4 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+}
+.stat-card .info p {
+    margin: 0;
+    font-size: 14px;
+    color: #777;
+}
+
+/* ---------------------------------
+   INVENTORY (فیلتر و جدول)
+   --------------------------------- */
+.inventory-container {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+/* فیلتر دسته‌بندی‌ها */
+.filter-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.category-chip {
+    padding: 8px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+.category-chip:hover {
+    background-color: var(--light-color);
+}
+.category-chip.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+.category-chip.hidden {
+    display: none;
+}
+.category-chip.toggle-more {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+    font-weight: bold;
+}
+.category-chip a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* جدول محصولات */
+.inventory-table-wrapper {
+    overflow-x: auto;
+}
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.inventory-table th,
+.inventory-table td {
+    padding: 15px 20px;
+    text-align: right;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+}
+.inventory-table th {
+    background-color: var(--table-header-bg);
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    text-transform: uppercase;
+}
+.inventory-table tbody tr:hover {
+    background-color: var(--bg-color);
+}
+
+.inventory-table .product-name {
+    font-weight: 600;
+    color: var(--dark-color);
+    font-size: 15px;
+}
+.inventory-table .client-name {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+.inventory-table .location-code {
+    font-family: monospace;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+/* نشانگر وضعیت */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 13px;
+    font-weight: 500;
+}
+.status-badge.in-stock { background-color: #e8f5e9; color: var(--secondary-color); }
+.status-badge.low-stock { background-color: #fff8e1; color: var(--warning-color); }
+.status-badge.out-of-stock { background-color: #ffebee; color: var(--danger-color); }
+.status-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.status-badge.in-stock::before { background-color: var(--secondary-color); }
+.status-badge.low-stock::before { background-color: var(--warning-color); }
+.status-badge.out-of-stock::before { background-color: var(--danger-color); }
+
+/* دکمه عملیات */
+.actions-menu {
+    position: relative;
+}
+.actions-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    color: #555;
+    transition: all 0.3s;
+}
+.actions-btn:hover {
+    background-color: var(--light-color);
+    border-color: #aaa;
+}
+.actions-dropdown {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    min-width: 150px;
+    overflow: hidden;
+}
+.actions-menu:hover .actions-dropdown {
+    display: block;
+}
+.actions-dropdown a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: var(--dark-color);
+    font-size: 14px;
+}
+.actions-dropdown a:hover {
+    background-color: var(--bg-color);
+}
+.actions-dropdown a i {
+    margin-left: 8px;
+    color: #777;
+}
+.actions-dropdown a.delete { color: var(--danger-color); }
+.actions-dropdown a.delete i { color: var(--danger-color); }
+
+/* صفحه‌بندی */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 5px;
+}
+.pagination a {
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: #555;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+.pagination a:hover {
+    background-color: var(--light-color);
+}
+.pagination a.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+.pagination a.disabled {
+    color: #ccc;
+    pointer-events: none;
+    border-color: #eee;
+}
+
+/* ---------------------------------
+   FOOTER (فوتر)
+   --------------------------------- */
+.app-footer {
+    padding: 15px 30px;
+    border-top: 1px solid var(--border-color);
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    background-color: white;
+}
+
+
+/* base.css - اضافه شدن استایل‌های جزئیات کالا */
+
+/* ---------------------------------
+   GOOD DETAIL (جزئیات کالا)
+   --------------------------------- */
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* دو ستون در صفحه بزرگ */
+    gap: 20px;
+}
+.detail-item {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+.detail-item:last-child {
+    border-bottom: none;
+}
+.detail-item.full-width {
+    grid-column: 1 / -1; /* کل عرض را اشغال می‌کند */
+    border-bottom: none;
+    padding-bottom: 0;
+}
+.detail-label {
+    font-size: 14px;
+    color: #777;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+.detail-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+.detail-value-desc {
+    font-size: 15px;
+    color: #555;
+    background-color: var(--light-color);
+    padding: 15px;
+    border-radius: 8px;
+    line-height: 1.8;
+    margin-top: 5px;
+}
+
+/* استایل کد مکان انبار که قبلا تعریف شده بود، اینجا استفاده می‌شود */
+.location-code {
+    font-family: monospace;
+    font-size: 14px;
+    background-color: #f0f0f0;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+/* base.css - اضافه شدن استایل‌های داشبورد */
+
+/* ---------------------------------
+   DASHBOARD (داشبورد)
+   --------------------------------- */
+
+/* گرید اصلی داشبورد (نمودارها و ...) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* برای موبایل (پیش‌فرض) */
+    gap: 25px;
+    margin-top: 25px;
+}
+/* در صفحه‌های بزرگتر از 992 پیکسل */
+@media (min-width: 992px) {
+    .dashboard-grid {
+        grid-template-columns: 2fr 1fr; /* ستون اصلی 2/3، ستون کناری 1/3 */
+    }
+}
+
+/* کارت‌های داخل گرید (برای نمودار و لیست‌ها) */
+.dashboard-card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+.dashboard-card h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    font-size: 18px;
+}
+
+/* بخش دکمه‌های دسترسی سریع */
+.quick-access-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.quick-access-buttons .app-btn {
+    font-size: 14px;
+    padding: 12px 18px;
+}
+
+/* بخش نمودار ظرفیت */
+.capacity-text {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 16px;
+    font-weight: 500;
+}
+.capacity-text strong {
+    font-size: 20px;
+    color: var(--warning-color);
+}
+
+/* بخش لیست کالاهای رو به اتمام */
+.low-stock-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+.low-stock-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 5px;
+    border-bottom: 1px dashed var(--border-color);
+}
+.low-stock-list li:last-child {
+    border-bottom: none;
+}
+.low-stock-list li a {
+    text-decoration: none;
+    color: var(--dark-color);
+    font-weight: 500;
+}
+.low-stock-list li a:hover {
+    color: var(--primary-color);
+}
+.low-stock-list li span {
+    font-size: 13px;
+    color: var(--danger-color);
+}
+.low-stock-list li span strong {
+    font-weight: 700;
+}
+
+/* base.css - این را به انتهای فایل اضافه کنید */
+
+/* این کد ردیف آخر (last-child) در بدنه جدول (tbody) را هدف می‌گیرد
+   و منوی کشویی (actions-dropdown) آن را برعکس می‌کند
+*/
+.inventory-table tbody tr:last-child .actions-dropdown {
+    top: auto; /* حالت پیش‌فرض top: 100% را لغو می‌کند */
+    bottom: 100%; /* منو را به بالای دکمه منتقل می‌کند */
+
+    /* اختیاری: یک فاصله کوچک برای زیبایی */
+    margin-bottom: 5px;
+}
+
+/* base.css - این را به انتهای فایل اضافه کنید */
+
+/* حل مشکل Z-index و Overflow به صورت همزمان
+*/
+
+/* ۱. به کانتینر فیلتر یک z-index پایین‌تر می‌دهیم.
+*/
+.filter-section {
+    position: relative;
+    z-index: 5;
+}
+
+/* ۲. به کانتینر جدول z-index بالاتر می‌دهیم تا روی فیلتر بیاید.
+*/
+.inventory-table-wrapper {
+    position: relative;
+    z-index: 6;
+    overflow-x: auto;
+}
+
+/* ۳. (جادوی اصلی)
+  به محض اینکه کاربر روی منوی سه‌نقطه هاور کرد (:hover)،
+  ما به والدش (inventory-table-wrapper) می‌گوییم که
+  اسکرول افقی را موقتاً به visible تغییر بده تا منو بریده نشود.
+*/
+.inventory-table-wrapper:has(.actions-menu:hover) {
+    overflow-x: visible;
+}
+
+/* ۴. (محکم‌کاری نهایی)
+  z-index خود منو را هم بسیار بالا می‌بریم تا
+  مطمئن شویم روی هدر اصلی و سایدبار هم قرار می‌گیرد.
+*/
+.actions-dropdown {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    min-width: 150px;
+    overflow: hidden;
+
+    /* این z-index باید از سایدبار (100) و هدر (99) بالاتر باشد */
+    z-index: 101;
+}
+/* base.css - تمام استایل‌های فرم قبلی را پاک کرده و این را جایگزین کنید */
+
+/* ---------------------------------
+   STYLED FORMS (طرح نهایی و زیبا)
+   --------------------------------- */
+
+/* ۱. گرید اصلی فرم (هوشمند و واکنش‌گرا) */
+.form-grid-polished {
+    display: grid;
+    /* در موبایل: ۱ ستون
+      در تبلت و دسکتاپ: ۲ ستون مساوی
+    */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
+    /* رعایت فاصله حرفه‌ای */
+    gap: 30px 25px; /* ۳۰پیکسل عمودی، ۲۵پیکسل افقی */
+}
+
+/* برای فیلدهایی که باید تمام عرض باشند (مثل نام کالا) */
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+/* ۲. گروه‌بندی فیلدها */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    position: relative; /* برای آیکن سلکت */
+}
+
+/* ۳. لیبل‌ها (بسیار مهم برای زیبایی) */
+.form-group label {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--dark-color);
+    margin-bottom: 10px; /* فاصله بیشتر لیبل از اینپوت */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ستاره قرمز برای فیلدهای اجباری */
+.form-group label .required-star {
+    color: var(--danger-color);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ۴. استایل اصلی فیلدهای ورودی */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="email"],
+.form-group input[type="url"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Vazir', sans-serif;
+    font-size: 15px;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+    background-color: #fcfcfc;
+}
+
+/* ۵. استایل فیلدهای Select (انتخابی) */
+.form-group select {
+    /* حذف ظاهر پیش‌فرض مرورگر */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    /* افزودن پدینگ برای جای آیکن */
+    padding-left: 35px;
+    cursor: pointer;
+}
+
+/* آیکن سفارشی برای فیلدهای Select */
+.select-wrapper::after {
+    content: '\f078'; /* آیکن chevron-down از FontAwesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 12px;
+    color: #aaa;
+    position: absolute;
+    left: 15px;
+    top: 48px; /* تنظیم دقیق موقعیت آیکن */
+    pointer-events: none; /* اجازه می‌دهد کلیک از روی آیکن عبور کند */
+}
+
+/* ۶. افکت Focus (بسیار زیبا و تمیز) */
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    /* یک سایه ملایم داخلی به جای box-shadow خارجی */
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    background-color: #fff;
+}
+
+/* ۷. متن راهنمای زیر فیلدها */
+.form-text {
+    font-size: 13px;
+    color: #888;
+    margin: 6px 2px 0 2px;
+    padding: 0;
+    line-height: 1.6;
+}
+
+/* ۸. خطاهای ولیدیشن جنگو */
+.field-errors {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--danger-color);
+    padding-top: 6px;
+}
+
+/* ۹. مدیریت دکمه‌های فرم در هدر */
+.styled-form-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.form-actions-header {
+    display: flex;
+    flex-shrink: 0; /* جلوگیری از شکستن دکمه‌ها */
+}
+/* base.css - این کد را به انتهای فایل اضافه کنید */
+
+/* ---------------------------------
+   اصلاحیه فرم‌ها (حذف لبه‌ها و افزایش فاصله داخلی)
+   --------------------------------- */
+
+/* "باکس وسط کامل باشد و لب نداشته باشد"
+  این کلاس جدید را به کانتینر فرم اعمال می‌کنیم
+*/
+.form-page-container.inventory-container {
+    /* حذف گوشه‌های گرد */
+    border-radius: 0;
+
+    /* حذف سایه برای ظاهری صاف‌تر */
+    box-shadow: none;
+
+    /* حفظ همان موقعیت وسط‌چین و عرض قبلی */
+    max-width: 1000px;
+    margin: 20px auto;
+}
+
+/* "نوشته های داخل یکم به سمت داخل متمایل باشد"
+  ما به wrapper داخلی فرم، پدینگ بیشتری می‌دهیم
+*/
+.form-page-container .styled-form-wrapper {
+    /* افزایش فاصله داخلی */
+    padding: 30px 45px; /* 30px بالا/پایین, 45px چپ/راست */
+}
+
+/* تنظیم کلی برای هدر صفحه */
+.page-header {
+    display: flex; /* فعال سازی Flexbox */
+    justify-content: space-between; /* هول دادن عناصر به دو سمت (شروع و پایان کانتینر) */
+    align-items: center; /* تراز عمودی (در وسط قرار گرفتن دکمه‌ها و عنوان) */
+    margin-bottom: 25px; /* فاصله از آمارها */
+}
+
+/* گروه‌بندی و فاصله بین دکمه‌ها */
+.header-actions {
+    display: flex; /* فعال سازی Flexbox برای دکمه‌ها */
+    gap: 10px; /* اضافه کردن 10 پیکسل فاصله بین دکمه‌ها */
+}
+
+    /* استایل باکس هشدار */
+    .alert-warning-box {
+        background-color: #fff3cd; /* زرد روشن */
+        color: #856404; /* قهوه‌ای تیره */
+        border: 1px solid #ffeeba;
+        padding: 12px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+        font-weight: bold;
+    }
+
+    /* استایل دکمه‌های غیرفعال */
+    .disabled-btn {
+        pointer-events: none; /* جلوگیری از کلیک */
+        opacity: 0.5;         /* کمرنگ کردن */
+        filter: grayscale(1); /* سیاه و سفید کردن */
+        cursor: not-allowed;
+    }
+    .disabled-btn {
+    pointer-events: none;
+    opacity: 0.5;
+    filter: grayscale(1);
+    cursor: not-allowed;
+}

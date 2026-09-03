@@ -1,0 +1,153 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>رسید انبار</title>
+    <style>
+        /* تنظیم فونت فارسی (بسیار مهم) */
+        /* فرض بر این است که فونت Vazir.ttf را در static/fonts دارید */
+        @font-face {
+            font-family: 'Vazir';
+            src: url('{% static "fonts/Vazir-Bold-FD-WOL.ttf" %}') format('truetype');" %}');
+        }
+
+        body {
+            font-family: 'Vazir', sans-serif;
+            font-size: 14px;
+            direction: rtl;
+            padding: 20px;
+        }
+
+        /* کادر دور رسید */
+        .receipt-box {
+            border: 2px solid #333;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* هدر */
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 { margin: 0; color: #444; }
+        .header p { margin: 5px 0 0; color: #777; font-size: 12px; }
+
+        /* اطلاعات کلی */
+        .info-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .info-item { margin-bottom: 10px; }
+        .label { font-weight: bold; color: #555; }
+
+        /* جدول کالا */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th { background-color: #f4f4f4; }
+
+        /* بخش امضا */
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+        }
+        .sign-box {
+            text-align: center;
+            width: 30%;
+            border-top: 1px dashed #999;
+            padding-top: 10px;
+        }
+
+        /* رنگ‌بندی بر اساس نوع عملیات */
+        .type-LOGIN { color: green; }
+        .type-DEPARTURE { color: red; }
+    </style>
+</head>
+<body>
+
+    <div class="receipt-box">
+
+        <div class="header">
+            <h1 class="type-{{ tx.type_of_operation }}">{{ doc_type }}</h1>
+            <p>سیستم مدیریت هوشمند انبار</p>
+            <p>تاریخ چاپ: {% now "Y/m/d H:i" %}</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="right-col">
+                <div class="info-item">
+                    <span class="label">شماره پیگیری:</span>
+                    <span>{{ tx.id }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">تامین‌کننده/مالک:</span>
+                    <span>{{ tx.supplier_good.company_name }}</span>
+                </div>
+            </div>
+
+            <div class="left-col">
+                <div class="info-item">
+                    <span class="label">تاریخ ثبت:</span>
+                    <span>{{ tx.created_at|date:"Y/m/d - H:i" }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="label">کاربر ثبت‌کننده:</span>
+                    <span>{{ user }}</span>
+                </div>
+            </div>
+        </div>
+
+        <h3>مشخصات کالا</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>کد کالا</th>
+                    <th>نام کالا</th>
+                    <th>تعداد</th>
+                    <th>واحد</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ tx.good.good_code|default:"-" }}</td>
+                    <td>{{ tx.good.name }}</td>
+                    <td style="font-weight: bold; font-size: 16px;">{{ tx.number }}</td>
+                    <td>عدد</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% if tx.description %}
+        <div style="margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 5px;">
+            <span class="label">توضیحات:</span>
+            {{ tx.description }}
+        </div>
+        {% endif %}
+
+        <div class="signatures">
+            {% if tx.type_of_operation == 'entry' %}
+            <div class="sign-box">امضای تحویل دهنده</div>
+            {% else %}
+            <div class="sign-box">امضای تحویل گیرنده</div>
+            {% endif %}
+            <div class="sign-box">امضای انباردار</div>
+            <div class="sign-box">مهر انبار</div>
+        </div>
+
+    </div>
+
+</body>
+</html>

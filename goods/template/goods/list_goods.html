@@ -1,0 +1,170 @@
+{% extends 'parent/base.html' %}
+
+{% block title %}لیست موجودی انبار{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+{{ message }}
+{% endfor %}
+{% endif %}
+
+<div class="page-header">
+    <h1>موجودی انبار</h1>
+
+    <div class="header-actions">
+
+        {# اگر کاربر تایید نشده باشد، دکمه‌ها غیرفعال می‌شوند #}
+
+        <a href="{% url 'goods:add_goods' %}"
+           class="app-btn app-btn-primary {% if not user.supplier_user.is_active %}disabled-btn{% endif %}"
+           {% if not user.supplier_user.is_active %}title="شما مجوز ثبت ندارید" {% endif %}>
+            <i class="fa-solid fa-plus"></i> ثبت کالای جدید
+        </a>
+
+        <a href="{% url 'goods:add_categories' %}"
+           class="app-btn app-btn-primary {% if not user.supplier_user.is_active %}disabled-btn{% endif %}"
+           {% if not user.supplier_user.is_active %}title="شما مجوز ثبت ندارید" {% endif %}>
+            <i class="fa-solid fa-plus"></i> ثبت دسته بندی کالا
+        </a>
+
+    </div>
+</div>
+
+<section class="stat-cards-container">
+    {# ... (بقیه کد تمپلیت) ... #}
+    <div class="stat-card">
+        <div class="icon green"><i class="fa-solid fa-boxes-stacked"></i></div>
+        <div class="info">
+            <h4>{{total_amount}}</h4>
+            <p>کل آیتم‌های موجود</p>
+        </div>
+    </div>
+    {% if user.is_superuser %}
+    <div class="stat-card">
+        <div class="icon blue"><i class="fa-solid fa-users"></i></div>
+        <div class="info">
+            <h4>{{total_supplier}}</h4>
+            <p>تعداد مشتریان</p>
+        </div>
+    </div>
+    {% endif %}
+    <div class="stat-card">
+        <div class="icon orange"><i class="fa-solid fa-battery-quarter"></i></div>
+        <div class="info">
+            <h4>{{running_items}}</h4>
+            <p>آیتم‌های رو به اتمام</p>
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="icon red"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="info">
+            <h4>{{warehouse_full}}%</h4>
+            <p>فضای انبار پر شده</p>
+        </div>
+    </div>
+</section>
+
+<div class="inventory-container">
+
+    <div class="filter-section">
+        <div class="category-filters" id="categoryFilters">
+            <span class="category-chip active"><a href="{% url 'goods:list_goods' %}">همه</a></span>
+
+            {% for cate in category %}
+            <span class="category-chip
+                    {% if forloop.counter0 >= 4 %}
+                        hidden
+                    {% endif %}
+                ">
+                    <a href="{% url 'goods:list_filtered' cate.slug %}">{{ cate.name }}</a>
+                </span>
+            {% endfor %}
+
+            {# اگر تعداد کل دسته‌بندی‌ها بیشتر از ۵ بود، دکمه "بیشتر" نمایش داده می‌شود #}
+            {% if category|length > 5 %}
+            <span class="category-chip toggle-more" id="toggleCategories">
+                    بیشتر...
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="inventory-table-wrapper">
+        <table class="inventory-table">
+            <thead>
+            <tr>
+                <th>نام کالا</th>
+                <th>کد محصول (SKU)</th>
+                <th>تعداد</th>
+                <th>وضعیت</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if user.is_superuser %}
+            {% for good in goods %}
+            <tr>
+                <td>
+                    <div class="product-name"><a href="{% url 'goods:detail_good' good.id %}">{{ good.name }}</a></div>
+                </td>
+                <td>{{ good.good_code }}</td>
+                <td><strong>{{ good.amount }}</strong></td>
+
+                {# وضعیت موجودی #}
+                <td>
+                    {% if good.amount > 0 %}
+                    <span class="status-badge in-stock">موجود</span>
+                    {% else %}
+                    <span class="status-badge out-of-stock">ناموجود</span>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #777; padding: 30px;">
+                    هیچ کالایی در انبار ثبت نشده است.
+                </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            {% for good in goods %}
+            <tr>
+                <td>
+                    <div class="product-name"><a href="{% url 'goods:detail_good' good.id %}">{{ good.good.name }}</a>
+                    </div>
+                </td>
+                <td>{{ good.good.good_code }}</td>
+                <td><strong>{{ good.number }}</strong></td>
+
+                {# وضعیت موجودی #}
+                <td>
+                    {% if good.good.amount > 0 %}
+                    <span class="status-badge in-stock">موجود</span>
+                    {% else %}
+                    <span class="status-badge out-of-stock">ناموجود</span>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #777; padding: 30px;">
+                    هیچ کالایی در انبار ثبت نشده است.
+                </td>
+            </tr>
+
+            </tbody>
+            {% endfor %}
+            {% endif %}
+        </table>
+    </div>
+
+</div>
+
+<div>
+    {% include 'partials/pagination.html' with page_obj=suppliers query_params=query_params %}
+
+</div>
+
+{% endblock %}

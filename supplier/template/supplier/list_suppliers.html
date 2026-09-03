@@ -1,0 +1,105 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{# تغییر عنوان صفحه #}
+{% block title %}مدیریت مشتریان{% endblock %}
+
+{% block content %}
+
+<!--    <div class="page-header">-->
+<!--        <h1>مدیریت مشتریان</h1>-->
+<!--        -->
+<!--        {# دکمه افزودن مشتری جدید #}-->
+<!--        <a href="{% url 'supplier:send_supplier' %}" class="app-btn app-btn-primary">-->
+<!--            <i class="fa-solid fa-user-plus"></i>-->
+<!--            افزودن مشتری جدید-->
+<!--        </a>-->
+<!--    </div>-->
+
+    <section class="stat-cards-container">
+        <div class="stat-card">
+            <div class="icon blue"><i class="fa-solid fa-users"></i></div>
+            <div class="info">
+                <h4>{{ suppliers_count }}</h4> {# فرض: این متغیر از ویو آمده #}
+                <p>تعداد کل مشتریان</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon green"><i class="fa-solid fa-boxes-stacked"></i></div>
+            <div class="info">
+                <h4>{{ goods.count }}</h4> {# فرض: این متغیر از ویو آمده #}
+                <p>کل کالاهای امانت‌داده‌شده</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon orange"><i class="fa-solid fa-user-clock"></i></div>
+            <div class="info">
+                <h4>{{user_in_30_days}}</h4> {# مثال #}
+                <p>مشتریان جدید (۳۰ روز)</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="inventory-container" style="margin-top: 25px;">
+        
+        {# بخش جستجو در هدر اصلی (base.html) قرار دارد، پس اینجا نیازی به فیلتر اضافی نیست #}
+
+        <div class="inventory-table-wrapper">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>نام برند (شرکت)</th>
+                        <th>نام مشتری (رابط)</th>
+                        <th>ایمیل</th>
+                        <th>تلفن تماس</th>
+                        <th>تاریخ ثبت</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                
+                {# فرض می‌کنیم لیستی به نام 'suppliers' از ویو ارسال شده #}
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>
+                        {# نام برند که همان نام مشتری شماست #}
+                        <div class="product-name"><a href="{% url 'supplier:detail_supplier' supplier.id %}">{{ supplier.company_name }}</a></div>
+                    </td>
+                    <td>
+                        {# نام فردی که با او در تماس هستید #}
+                        <div class="client-name">{{ supplier.contact_person }}</div>
+                    </td>
+                    <td>{{ supplier.email }}</td>
+                    <td>{{ supplier.phone_number }}</td>
+                    <td>{{ supplier.created_at|date:"Y/m/d" }}</td>
+                    <td>
+                        <div class="actions-menu">
+                            <button class="actions-btn"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                            <div class="actions-dropdown">
+                                <a href="{% url 'supplier:detail_supplier' supplier.id %}"><i class="fa-solid fa-eye"></i> مشاهده جزئیات</a>
+                                <a href="#"><i class="fa-solid fa-pen"></i> ویرایش</a>
+                                <a href="#" class="delete"><i class="fa-solid fa-trash"></i> حذف</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align: center; color: #777; padding: 30px;">
+                        هیچ مشتری (تامین‌کننده) در سیستم ثبت نشده است.
+                    </td>
+                </tr>
+                {% endfor %}
+                
+                </tbody>
+            </table>
+        </div>
+
+    <div>
+        {% include 'partials/pagination.html' with page_obj=goods query_params=query_params %}
+
+    </div>
+
+    </div>
+
+{% endblock %}

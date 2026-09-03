@@ -1,0 +1,154 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}ثبت ورود کالا{% endblock %}
+
+{% block content %}
+
+<form method="post" class="styled-form-page">
+    {% csrf_token %}
+
+    <div class="page-header">
+        <h1>
+            <i class="fa-solid fa-arrow-down" style="color: var(--secondary-color);"></i>
+            ثبت ورود کالا (Check-In)
+        </h1>
+
+        <div class="form-actions-header">
+            <a href="{% url 'entry_exit:list_entry_exit' %}" class="app-btn" style="background-color: var(--light-color); color: #555;">
+                <i class="fa-solid fa-times"></i> انصراف
+            </a>
+            <input type="hidden" name="submission_token" value="{{ submission_token }}">
+            <button type="submit" class="app-btn" style="background-color: var(--secondary-color); color: white; margin-right: 10px;">
+                <i class="fa-solid fa-check"></i> ثبت ورود
+            </button>
+        </div>
+    </div>
+
+    <div class="inventory-container form-page-container">
+
+        <div class="styled-form-wrapper">
+
+            {{ form.non_field_errors }}
+
+            <div class="form-grid-polished">
+
+                {% if user.is_superuser %}
+
+                <div class="form-group full-width select-wrapper">
+                    <label for="{{ form.good.id_for_label }}">
+                        <span>انتخاب کالا</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.good }}
+                    <p class="form-text">کالایی که وارد انبار شده است را انتخاب کنید.</p>
+                    <div class="field-errors">{{ form.good.errors }}</div>
+                </div>
+                {% else %}
+                                <div class="form-group full-width select-wrapper">
+                    <label for="{{ form.good_supplier.id_for_label }}">
+                        <span>انتخاب کالا</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.good_supplier }}
+                    <p class="form-text">کالایی که وارد انبار شده است را انتخاب کنید.</p>
+                    <div class="field-errors">{{ form.good_supplier.errors }}</div>
+                </div>
+                {% endif %}
+
+                {% if user.is_superuser %}
+                <div class="form-group select-wrapper">
+                    <label for="{{ form.supplier_good.id_for_label }}">
+                        <span>تامین‌کننده (فرستنده)</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.supplier_good }}
+                    <p class="form-text">شخص یا شرکتی که کالا را ارسال کرده است.</p>
+                    <div class="field-errors">{{ form.supplier_good.errors }}</div>
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="{{ form.number.id_for_label }}">
+                        <span>تعداد وارده</span>
+                        <span class="required-star">*</span>
+                    </label>
+                    {{ form.number }}
+                    <p class="form-text">تعداد فیزیکی شمارش شده.</p>
+                    <div class="field-errors">{{ form.number.errors }}</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.applicant_person.id_for_label }}">
+                        <span>نام درخواست‌کننده / تحویل‌دهنده</span>
+                        <span class="required-star">*</span>
+                    </label>
+
+                    {# اگر فیلد را در forms.py اضافه کرده‌اید از این استفاده کنید: #}
+                    {{ form.applicant_person }}
+
+                    {# اگر هنوز در forms.py اضافه نکردید و فقط برای تست می‌خواهید (بعداً باید هندل شود): #}
+                    {# <input type="text" name="applicant_person" class="form-control" placeholder="نام شخص را وارد کنید"> #}
+
+                    <p class="form-text">نام شخصی که درخواست ورود کالا را داده است.</p>
+                    <div class="field-errors">{{ form.applicant_person.errors }}</div>
+                </div>
+                {% if form.description %}
+                <div class="form-group full-width">
+                    <label for="{{ form.description.id_for_label }}">توضیحات (اختیاری)</label>
+                    {{ form.description }}
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var goodSelect = document.getElementById('id_good');
+        var supplierSelect = document.getElementById('id_supplier_good');
+
+        function loadSuppliers() {
+            var goodId = goodSelect.value;
+            supplierSelect.innerHTML = '<option value="">--- در حال بارگذاری... ---</option>';
+            supplierSelect.disabled = true;
+
+            if (!goodId) {
+                supplierSelect.innerHTML = '<option value="">--- ابتدا کالا را انتخاب کنید ---</option>';
+                return;
+            }
+
+            fetch("{% url 'entry_exit:ajax_load_suppliers' %}" + `?good_id=${encodeURIComponent(goodId)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        supplierSelect.innerHTML = '<option value="">--- مالک کالا را انتخاب کنید ---</option>';
+                        data.forEach(function(item) {
+                            var option = document.createElement('option');
+                            option.value = item.id;
+                            option.text = item.name;
+                            supplierSelect.appendChild(option);
+                        });
+                        supplierSelect.disabled = false;
+                    } else {
+                        supplierSelect.innerHTML = '<option value="">--- هیچ مالکی این کالا را موجود ندارد ---</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('خطا:', error);
+                    supplierSelect.innerHTML = '<option value="">--- خطایی در ارتباط رخ داد ---</option>';
+                });
+        }
+
+        goodSelect.addEventListener('change', loadSuppliers);
+
+        if (goodSelect.value) {
+            loadSuppliers();
+        } else {
+             supplierSelect.innerHTML = '<option value="">--- ابتدا کالا را انتخاب کنید ---</option>';
+        }
+    });
+</script>
+{% endblock %}

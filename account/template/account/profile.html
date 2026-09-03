@@ -1,0 +1,306 @@
+{% extends 'parent/base.html' %}
+{% load static %}
+
+{% block title %}پروفایل کاربری | {{ user.username }}{% endblock %}
+
+{% block content %}
+
+<style>
+    /* استایل‌های اختصاصی پروفایل */
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    /* 1. کارت مشخصات کاربر */
+    .profile-card {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .user-identity {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .avatar-circle {
+        width: 80px;
+        height: 80px;
+        background-color: var(--secondary-color);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .user-details h2 {
+        margin: 0;
+        color: #333;
+        font-size: 1.5rem;
+    }
+
+    .user-details p {
+        margin: 5px 0 0;
+        color: #777;
+    }
+
+    .user-stats {
+        display: flex;
+        gap: 30px;
+    }
+
+    .stat-box {
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    /* 2. جداول داده‌ها */
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        border-right: 4px solid var(--secondary-color);
+        padding-right: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .data-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #e0e0e0;
+        overflow: hidden; /* برای گرد شدن گوشه جدول */
+    }
+
+    .custom-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .custom-table th {
+        background-color: #f8f9fa;
+        color: #555;
+        font-weight: 600;
+        text-align: right;
+        padding: 15px;
+        border-bottom: 2px solid #eee;
+    }
+
+    .custom-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        vertical-align: middle;
+    }
+
+    .custom-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* وضعیت‌ها (Badge) */
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .status-approved { background-color: #e6f9ec; color: #28a745; }
+    .status-pending { background-color: #fff8e1; color: #f39c12; }
+    .status-rejected { background-color: #fde8e8; color: #dc3545; }
+
+    /* نوع عملیات */
+    .type-entry { color: #28a745; font-weight: bold; }
+    .type-exit { color: #dc3545; font-weight: bold; }
+
+    /* ریسپانسیو برای موبایل */
+    @media (max-width: 768px) {
+        .profile-card { flex-direction: column; text-align: center; }
+        .user-identity { flex-direction: column; }
+        .table-responsive { overflow-x: auto; }
+    }
+</style>
+
+<div class="dashboard-container">
+
+    <div class="profile-card">
+        <div class="user-identity">
+            <div class="avatar-circle">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <div class="user-details">
+                <h2>{{ user.first_name|default:'اسم ثبت نشده' }} {{ user.last_name|default:'-' }}</h2>
+                <p>@{{ user.username }}</p>
+                <p style="font-size: 0.8rem; margin-top: 5px;">
+                    <i class="fa-regular fa-calendar"></i> عضویت: {{ user.created_at|date:"Y/m/d" }}
+                </p>
+            </div>
+        </div>
+
+        <div class="user-stats">
+            <div class="stat-box">
+                <span class="stat-number">{{ goods_count }}</span>
+                <span class="stat-label">کالاهای من</span>
+            </div>
+            <div class="stat-box">
+                <span class="stat-number">{{ transactions_count }}</span>
+                <span class="stat-label">تراکنش‌ها</span>
+            </div>
+            {% if user.is_superuser %}
+            <div class="stat-box">
+                <span class="stat-number" style="color: var(--danger-color);">Admin</span>
+                <span class="stat-label">نقش</span>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div>
+            <a href="{% url 'account:PasswordChangeView' %}" class="app-btn" style="background-color: var(--light-color); color: #555; font-size: 0.9rem;">
+                <i class="fa-solid fa-key"></i> تغییر رمز
+            </a>
+            <form action="{% url 'account:logout' %}" method="post" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="app-btn" style="background-color: #fee; color: var(--danger-color); font-size: 0.9rem;">
+                    <i class="fa-solid fa-sign-out"></i> خروج
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">
+            <span><i class="fa-solid fa-boxes-stacked"></i> موجودی کالاهای شما</span>
+            <a href="{% url 'goods:add_goods' %}" style="font-size: 0.9rem; color: var(--secondary-color);">+ کالای جدید</a>
+        </div>
+        <div class="data-card table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>نام کالا</th>
+                        <th>دسته‌بندی</th>
+                        <th>موجودی فعلی</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for good in goods %}
+                    <tr>
+                        <td><strong>{{ good.good.name }}</strong></td>
+                        <td>{{ good.good.category.name|default:"-" }}</td>
+                        <td>{{ good.number }}</td>
+                        <td>
+                            <a href="{% url 'goods:detail_good' good.good.id %}" style="color: var(--secondary-color);">
+                                <i class="fa-solid fa-eye"></i> مشاهده
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #999; padding: 30px;">
+                            هنوز کالایی ثبت نکرده‌اید.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div>
+        <div class="section-title">
+            <span><i class="fa-solid fa-list-check"></i> وضعیت درخواست‌های ارسالی</span>
+            <a href="{% url 'entry_exit:list_entry_exit' %}" style="font-size: 0.9rem; color: var(--secondary-color);">مشاهده همه</a>
+        </div>
+        <div class="data-card table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>نوع</th>
+                        <th>کالا</th>
+                        <th>تعداد</th>
+                        <th>درخواست‌کننده / تحویل‌دهنده</th>
+                        <th>تاریخ</th>
+                        <th>وضعیت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in entry_exit %}
+                    <tr>
+                        <td>
+                            {% if req.type_of_operation == 'entry' %}
+                                <span class="type-entry"><i class="fa-solid fa-arrow-down"></i> ورود</span>
+                            {% else %}
+                                <span class="type-exit"><i class="fa-solid fa-arrow-up"></i> خروج</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ req.good.name }}</td>
+                        <td>{{ req.number }}</td>
+                        
+                        <td>
+                            <span style="color: #555; font-size: 0.9rem;">
+                                <i class="fa-solid fa-user-tag" style="color: #ccc;"></i>
+                                {{ req.applicant_person|default:"---" }}
+                            </span>
+                        </td>
+
+                        <td style="font-size: 0.9rem; color: #666;">
+                            {{ req.created_at|date:"Y/m/d" }}
+                        </td>
+                        
+                        <td>
+                            {% if req.is_active %}
+                                <span class="status-badge status-approved">
+                                    <i class="fa-solid fa-check"></i> تایید شده
+                                </span>
+                            {% else %}
+                                <span class="status-badge status-pending">
+                                    <i class="fa-solid fa-clock"></i> در انتظار تایید
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #999; padding: 30px;">
+                            هیچ درخواستی یافت نشد.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
