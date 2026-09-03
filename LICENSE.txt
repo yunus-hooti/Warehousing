@@ -1,0 +1,8 @@
+Copyright (c) 2026 yunus-hooti
+
+All Rights Reserved.
+
+This repository is made publicly available for portfolio and
+demonstration purposes only. No part of this code may be copied,
+modified, distributed, or used for any purpose without explicit
+written permission from the copyright holder.
