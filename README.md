@@ -1,17 +1,13 @@
-# Store
+# Warehousing
 
-یک فروشگاه اینترنتی ساخته‌شده با Django برای فروش محصولات فیزیکی (پوشاک، اکسسوری و...).
+سیستم مدیریت انبار ساخته‌شده با Django برای ثبت و کنترل ورود و خروج کالا.
 
 ## امکانات
 
 - مدیریت حساب کاربری (Account)
-- سبد خرید (Cart)
-- کاتالوگ محصولات (Catalog)
-- کد تخفیف (Coupon)
-- ثبت و مدیریت سفارش (Order)
-- پرداخت (Payment) — پرداخت آنلاین از طریق درگاه زرین‌پال (Zarinpal)
-- ترجمه خودکار محتوا (deep-translator)
-- API (برای اتصال به اپ موبایل یا فرانت‌اند جدا) با Django REST Framework
+- ثبت ورود و خروج کالا (Entry/Exit) با فرآیند تأیید مدیر
+- مدیریت کالاها (Goods)
+- مدیریت تأمین‌کنندگان (Supplier)
 
 ## پیش‌نیازها
 
@@ -23,8 +19,8 @@
 
 ۱. کلون کردن پروژه:
 ```bash
-git clone https://github.com/yunus-hooti/store.git
-cd store
+git clone https://github.com/yunus-hooti/Warehousing.git
+cd Warehousing
 ```
 
 ۲. ساخت و فعال‌سازی محیط مجازی:
@@ -41,7 +37,7 @@ pip install -r requirements.txt
 
 ۴. تنظیم متغیرهای محیطی:
 
-یک فایل `.env` در ریشه پروژه بساز (نمونه‌ی آن در `.env.example` موجود است) و مقادیر لازم مثل `SECRET_KEY` را در آن قرار بده.
+یک فایل `.env` در ریشه پروژه بساز و مقادیر لازم مثل `SECRET_KEY` را در آن قرار بده.
 
 ۵. اجرای migration ها:
 ```bash
@@ -63,30 +59,22 @@ python manage.py runserver
 ## ساختار پروژه
 
 ```
-store/
-├── account/      # مدیریت کاربران و احراز هویت
-├── cart/         # سبد خرید
-├── catalog/      # محصولات و دسته‌بندی‌ها
-├── coupon/       # کد تخفیف
-├── order/        # سفارش‌ها
-├── payment/      # پرداخت
-├── api/          # REST API
+Warehousing/
+├── account/       # مدیریت کاربران و احراز هویت
+├── entry_exit/    # ثبت ورود و خروج کالا
+├── goods/         # مدیریت کالاها
+├── supplier/      # مدیریت تأمین‌کنندگان
 └── manage.py
 ```
 
 ## تکنولوژی‌ها
 
-- Django 5.2.7
-- Django REST Framework 3.17.1
-- Zarinpal Python SDK (درگاه پرداخت)
-- Pillow (پردازش تصاویر)
-- deep-translator (ترجمه خودکار)
-- pytest (تست)
+- Django
 - SQLite (دیتابیس توسعه)
 
 ## وضعیت پروژه
 
-این پروژه در حال توسعه است (MVP).
+این پروژه در حال توسعه است.
 
 ## لایسنس
 
